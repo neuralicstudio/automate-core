@@ -15,6 +15,7 @@ import {
   AlertTriangle,
   MessageSquare,
   Loader2,
+  Smartphone,
 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -33,6 +34,7 @@ const aiModules = [
   { icon: Camera, title: 'Damage AI', description: 'AI-powered damage detection', path: '/damage-ai' },
   { icon: AlertTriangle, title: 'Fault Codes', description: 'OBD-II/DTC explainer', path: '/fault-codes' },
   { icon: MessageSquare, title: 'Workshop Assistant', description: 'AI repair chatbot', path: '/workshop-assistant' },
+  { icon: Smartphone, title: 'OCR Scanner', description: 'Scan plates & documents', path: '/ocr-scanner' },
 ];
 
 export default function Dashboard() {
