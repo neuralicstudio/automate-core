@@ -34,8 +34,8 @@ const features = [
     icon: Smartphone,
     title: 'OCR Scanner',
     description: 'Scan plates and documents with your camera',
-    active: false,
-    path: null,
+    active: true,
+    path: '/ocr-scanner',
   },
   {
     icon: Zap,
