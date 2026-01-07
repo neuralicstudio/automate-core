@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
-import { Car, LayoutDashboard, Search, History, Settings, LogOut, Menu, X } from 'lucide-react';
+import { Car, LayoutDashboard, Search, History, Settings, LogOut, Menu, X, Camera, AlertTriangle, MessageSquare, ScanLine } from 'lucide-react';
 import { useState } from 'react';
 
 export function Navbar() {
@@ -10,6 +10,13 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isActive = (path: string) => location.pathname === path;
+
+  const aiTools = [
+    { path: '/damage-ai', label: 'Damage AI', icon: Camera },
+    { path: '/fault-codes', label: 'Fault Codes', icon: AlertTriangle },
+    { path: '/workshop-assistant', label: 'Workshop AI', icon: MessageSquare },
+    { path: '/ocr-scanner', label: 'OCR Scanner', icon: ScanLine },
+  ];
 
   const navLinks = user ? [
     { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -82,25 +89,54 @@ export function Navbar() {
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-border animate-fade-in">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`flex items-center gap-3 py-3 px-4 rounded-lg ${isActive(link.path) ? 'bg-primary/10 text-primary' : 'text-muted-foreground'}`}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <link.icon className="w-5 h-5" />
-                {link.label}
-              </Link>
-            ))}
+            {/* AI Tools Quick Access */}
+            <div className="mb-4">
+              <p className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">AI Tools</p>
+              <div className="grid grid-cols-2 gap-2 px-4">
+                {aiTools.map((tool) => (
+                  <Link
+                    key={tool.path}
+                    to={tool.path}
+                    className={`flex items-center gap-2 py-3 px-3 rounded-lg text-sm transition-colors ${isActive(tool.path) ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-foreground hover:bg-muted'}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <tool.icon className="w-4 h-4" />
+                    {tool.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Navigation Links */}
+            {navLinks.length > 0 && (
+              <div className="border-t border-border pt-4">
+                <p className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Navigation</p>
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    className={`flex items-center gap-3 py-3 px-4 rounded-lg ${isActive(link.path) ? 'bg-primary/10 text-primary' : 'text-muted-foreground'}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <link.icon className="w-5 h-5" />
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            {/* Auth Section */}
             <div className="pt-4 mt-4 border-t border-border">
               {user ? (
-                <Button variant="ghost" className="w-full justify-start" onClick={signOut}>
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Sign Out
-                </Button>
+                <div className="px-4">
+                  <p className="text-sm text-muted-foreground mb-2">{user.email}</p>
+                  <Button variant="ghost" className="w-full justify-start" onClick={signOut}>
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sign Out
+                  </Button>
+                </div>
               ) : (
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 px-4">
                   <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
                     <Button variant="ghost" className="w-full">Sign In</Button>
                   </Link>
