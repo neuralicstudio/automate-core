@@ -1,4 +1,5 @@
-import { Car, Camera, AlertTriangle, MessageSquare, Smartphone, Zap, Lock } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Car, Camera, AlertTriangle, MessageSquare, Smartphone, Zap } from 'lucide-react';
 
 const features = [
   {
@@ -6,36 +7,42 @@ const features = [
     title: 'VIN Decoder',
     description: 'Instant vehicle identification and specification extraction',
     active: true,
+    path: '/vin-decoder',
   },
   {
     icon: Camera,
     title: 'Damage AI',
     description: 'AI-powered damage detection and assessment',
-    active: false,
+    active: true,
+    path: '/damage-ai',
   },
   {
     icon: AlertTriangle,
     title: 'Fault Codes',
     description: 'Real-time diagnostic fault code interpretation',
-    active: false,
+    active: true,
+    path: '/fault-codes',
   },
   {
     icon: MessageSquare,
     title: 'Workshop Assistant',
     description: 'AI chatbot for repair guidance and parts lookup',
-    active: false,
+    active: true,
+    path: '/workshop-assistant',
   },
   {
     icon: Smartphone,
     title: 'OCR Scanner',
     description: 'Scan plates and documents with your camera',
     active: false,
+    path: null,
   },
   {
     icon: Zap,
     title: 'WhatsApp Integration',
     description: 'Connect with customers via WhatsApp directly',
     active: false,
+    path: null,
   },
 ];
 
@@ -56,29 +63,50 @@ export function FeaturesSection() {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((feature, index) => (
-            <div
-              key={feature.title}
-              className={`feature-card relative ${!feature.active ? 'opacity-60' : ''}`}
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              {!feature.active && (
-                <span className="coming-soon-badge">Coming Soon</span>
-              )}
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${
-                feature.active 
-                  ? 'bg-gradient-primary' 
-                  : 'bg-secondary'
-              }`}>
-                <feature.icon className="w-6 h-6 text-primary-foreground" />
+          {features.map((feature, index) => {
+            const CardContent = (
+              <>
+                {!feature.active && (
+                  <span className="coming-soon-badge">Coming Soon</span>
+                )}
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${
+                  feature.active 
+                    ? 'bg-gradient-primary' 
+                    : 'bg-secondary'
+                }`}>
+                  <feature.icon className="w-6 h-6 text-primary-foreground" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
+                <p className="text-muted-foreground text-sm">{feature.description}</p>
+                {feature.active && (
+                  <div className="mt-4 w-full h-1 bg-gradient-primary rounded-full" />
+                )}
+              </>
+            );
+
+            if (feature.active && feature.path) {
+              return (
+                <Link
+                  key={feature.title}
+                  to={feature.path}
+                  className="feature-card relative block"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  {CardContent}
+                </Link>
+              );
+            }
+
+            return (
+              <div
+                key={feature.title}
+                className={`feature-card relative ${!feature.active ? 'opacity-60' : ''}`}
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                {CardContent}
               </div>
-              <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-              <p className="text-muted-foreground text-sm">{feature.description}</p>
-              {feature.active && (
-                <div className="mt-4 w-full h-1 bg-gradient-primary rounded-full" />
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

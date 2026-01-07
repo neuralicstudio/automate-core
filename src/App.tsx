@@ -11,6 +11,9 @@ import Dashboard from "./pages/Dashboard";
 import VinDecoder from "./pages/VinDecoder";
 import History from "./pages/History";
 import Settings from "./pages/Settings";
+import DamageAI from "./pages/DamageAI";
+import FaultCodes from "./pages/FaultCodes";
+import WorkshopAssistant from "./pages/WorkshopAssistant";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +33,9 @@ const App = () => (
             <Route path="/vin-decoder" element={<VinDecoder />} />
             <Route path="/history" element={<History />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/damage-ai" element={<DamageAI />} />
+            <Route path="/fault-codes" element={<FaultCodes />} />
+            <Route path="/workshop-assistant" element={<WorkshopAssistant />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
