@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useCredits } from '@/hooks/useCredits';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, User, Check, AlertCircle } from 'lucide-react';
+import { CreditStatus } from '@/components/credits/CreditStatus';
+import { Loader2, User, Check, AlertCircle, CreditCard } from 'lucide-react';
 
 export default function Settings() {
   const { user, loading: authLoading } = useAuth();
+  const { remaining, isPremium } = useCredits();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
@@ -138,6 +141,27 @@ export default function Settings() {
           </form>
         </div>
 
+        {/* Credits & Subscription */}
+        <div className="glass-card p-6 mb-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+              <CreditCard className="w-5 h-5 text-primary" />
+            </div>
+            <h2 className="text-lg font-semibold">Credits & Subscription</h2>
+          </div>
+          
+          <CreditStatus />
+          
+          <div className="mt-4 p-4 rounded-lg bg-secondary/30 border border-border/50">
+            <p className="text-sm text-muted-foreground">
+              {isPremium 
+                ? `You have ${remaining} premium credits remaining this month.`
+                : `Free tier: ${remaining} of 3 free uses remaining. Upgrade to Premium for 100 uses/month!`
+              }
+            </p>
+          </div>
+        </div>
+
         {/* Account Info */}
         <div className="glass-card p-6">
           <h2 className="text-lg font-semibold mb-4">Account Information</h2>
@@ -156,7 +180,9 @@ export default function Settings() {
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Plan:</span>
-              <span className="text-primary font-medium">Free Trial</span>
+              <span className={isPremium ? "text-amber-500 font-medium" : "text-primary font-medium"}>
+                {isPremium ? 'Premium' : 'Free'}
+              </span>
             </div>
           </div>
         </div>

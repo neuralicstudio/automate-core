@@ -15,6 +15,7 @@ import DamageAI from "./pages/DamageAI";
 import FaultCodes from "./pages/FaultCodes";
 import WorkshopAssistant from "./pages/WorkshopAssistant";
 import OcrScanner from "./pages/OcrScanner";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/fault-codes" element={<FaultCodes />} />
             <Route path="/workshop-assistant" element={<WorkshopAssistant />} />
             <Route path="/ocr-scanner" element={<OcrScanner />} />
+            <Route path="/admin" element={<Admin />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
