@@ -251,18 +251,33 @@ CREATE POLICY "Users can insert their own lookups" ON public.vin_lookups FOR INS
    - Project URL
    - anon/public key
 
-### Step 3: Deploy Edge Functions to External Supabase
-1. Install Supabase CLI: `npm install -g supabase`
-2. Login: `supabase login`
-3. Link project: `supabase link --project-ref YOUR_PROJECT_REF`
-4. Set secrets:
-   ```bash
-   supabase secrets set OPENAI_API_KEY=your_openai_key
-   supabase secrets set LOVABLE_API_KEY=your_lovable_key  # If using Lovable AI
-   ```
-5. Deploy functions: `supabase functions deploy`
+### Step 3: Deploy Edge Functions via Supabase Dashboard
+1. Go to your Supabase project → **Edge Functions** (left sidebar)
+2. Click **Create a new function**
+3. For each function, create with the following names and paste the code:
 
-### Step 4: Deploy Frontend to Render
+#### Function 1: `analyze-damage`
+- Click **New Function** → Name: `analyze-damage`
+- Copy the code from `supabase/functions/analyze-damage/index.ts` in your repo
+
+#### Function 2: `explain-fault-code`
+- Click **New Function** → Name: `explain-fault-code`
+- Copy the code from `supabase/functions/explain-fault-code/index.ts`
+
+#### Function 3: `ocr-scan`
+- Click **New Function** → Name: `ocr-scan`
+- Copy the code from `supabase/functions/ocr-scan/index.ts`
+
+#### Function 4: `workshop-assistant`
+- Click **New Function** → Name: `workshop-assistant`
+- Copy the code from `supabase/functions/workshop-assistant/index.ts`
+
+### Step 4: Set Edge Function Secrets
+1. In Supabase Dashboard → **Edge Functions** → **Secrets** (top right)
+2. Click **Add Secret** and add:
+   - `OPENAI_API_KEY` = Your OpenAI API key
+
+### Step 5: Deploy Frontend to Render
 1. Go to https://render.com and create a **Static Site**
 2. Connect your GitHub repository
 3. Configure build settings:
@@ -273,7 +288,7 @@ CREATE POLICY "Users can insert their own lookups" ON public.vin_lookups FOR INS
    - `VITE_SUPABASE_PUBLISHABLE_KEY` = Your Supabase anon key
 5. Click **Deploy**
 
-### Step 5: Configure Auth Redirect URLs
+### Step 6: Configure Auth Redirect URLs
 In your external Supabase project:
 1. Go to **Authentication** → **URL Configuration**
 2. Add your Render URL to **Site URL**
@@ -293,7 +308,7 @@ In your external Supabase project:
 
 ## Making Yourself Admin (External Supabase)
 
-After deploying, sign up with your email, then run this SQL in Supabase:
+After deploying, sign up with your email, then run this SQL in Supabase SQL Editor:
 
 ```sql
 -- Replace with your actual user ID after signing up
@@ -309,8 +324,9 @@ SELECT id, 'admin' FROM auth.users WHERE email = 'your-email@example.com';
 Ensure your Render URL is added to Supabase's allowed origins in **Authentication** → **URL Configuration**.
 
 ### Edge Functions Not Working
-1. Check function logs: `supabase functions logs function-name`
-2. Verify secrets are set: `supabase secrets list`
+1. In Supabase Dashboard → **Edge Functions** → click on the function
+2. Check **Logs** tab for errors
+3. Verify secrets are set in **Edge Functions** → **Secrets**
 
 ### Auth Redirect Issues
 Make sure redirect URLs match exactly (including trailing slashes).
