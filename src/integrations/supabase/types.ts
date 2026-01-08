@@ -41,6 +41,45 @@ export type Database = {
         }
         Relationships: []
       }
+      user_credits: {
+        Row: {
+          created_at: string
+          id: string
+          is_premium: boolean
+          passcode: string | null
+          passcode_used: boolean
+          premium_expires_at: string | null
+          premium_uses_remaining: number
+          total_uses: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_premium?: boolean
+          passcode?: string | null
+          passcode_used?: boolean
+          premium_expires_at?: string | null
+          premium_uses_remaining?: number
+          total_uses?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_premium?: boolean
+          passcode?: string | null
+          passcode_used?: boolean
+          premium_expires_at?: string | null
+          premium_uses_remaining?: number
+          total_uses?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -157,6 +196,11 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      increment_usage: { Args: { p_user_id: string }; Returns: Json }
+      validate_passcode: {
+        Args: { p_passcode: string; p_user_id: string }
+        Returns: Json
       }
     }
     Enums: {
