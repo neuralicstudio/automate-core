@@ -1,3 +1,4 @@
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
@@ -20,68 +21,75 @@ serve(async (req) => {
       );
     }
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY is not configured");
+    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
+    if (!OPENAI_API_KEY) {
+      console.error("OPENAI_API_KEY is not configured");
+      throw new Error("OPENAI_API_KEY is not configured");
     }
 
-    console.log("Explaining fault code:", faultCode);
+    console.log(`Explaining fault code: ${faultCode}`);
 
     const vehicleContext = vehicleInfo 
-      ? `The vehicle is a ${vehicleInfo.year} ${vehicleInfo.make} ${vehicleInfo.model}.`
-      : "No specific vehicle information provided.";
+      ? `The vehicle is a ${vehicleInfo.year || ''} ${vehicleInfo.make || ''} ${vehicleInfo.model || ''}.`
+      : '';
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        "Authorization": `Bearer ${OPENAI_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "gpt-4o-mini",
         messages: [
           {
             role: "system",
-            content: `You are an expert automotive diagnostic technician AI with deep knowledge of OBD-II diagnostic trouble codes (DTCs). Explain fault codes in a Gen-Z friendly, easy-to-understand way.
+            content: `You are AutoMate's Fault Code Expert - a knowledgeable, friendly AI mechanic helper with a Gen-Z vibe. You explain OBD-II/DTC fault codes in plain English.
+
+Your personality:
+- Casual and approachable, like chatting with a knowledgeable friend
+- Use some Gen-Z slang naturally (but don't overdo it)
+- Be encouraging and supportive
+- Add relevant emojis to make responses engaging
+- Start responses with casual greetings like "Yo!", "Bet!", "Alright fam", etc.
 
 When explaining a fault code, provide:
-1. **What It Means**: Plain English explanation (no jargon)
-2. **The Technical Stuff**: Brief technical explanation for those who want it
-3. **Common Causes**: Top 3-5 most likely causes
-4. **Symptoms You Might Notice**: What the driver might experience
-5. **Severity Level**: How serious is this? (🟢 Low / 🟡 Medium / 🔴 High / ⚫ Critical)
-6. **Can You Still Drive?**: Is it safe to drive with this code?
-7. **DIY or Mechanic?**: Can this be fixed at home or needs a pro?
-8. **Estimated Repair Cost**: Rough range in USD
+1. **Code Meaning**: What the code actually means in plain English
+2. **Severity**: How serious is this? (Low/Medium/High/Critical) 🚨
+3. **Common Causes**: Top 3-5 reasons this code appears
+4. **Symptoms**: What the driver might notice
+5. **Repair Steps**: Basic troubleshooting or what a mechanic will do
+6. **Estimated Cost**: Rough repair cost range in USD 💰
+7. **Can I Drive?**: Is it safe to keep driving? 🚗
 
-Keep it casual and conversational! Start with something like "Alright, let's decode this bad boy!" or "Yo, here's what's going on under the hood..."
-
-Use emojis to make it engaging but not excessive.`
+Keep explanations clear and avoid overly technical jargon.`
           },
           {
             role: "user",
-            content: `Explain this OBD-II/DTC fault code: ${faultCode}\n\n${vehicleContext}`
+            content: `Explain this fault code: ${faultCode}. ${vehicleContext}`
           }
         ],
+        max_tokens: 800,
       }),
     });
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error("OpenAI API error:", response.status, errorText);
+      
       if (response.status === 429) {
         return new Response(
           JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }),
           { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-      if (response.status === 402) {
+      if (response.status === 401) {
         return new Response(
-          JSON.stringify({ error: "AI usage limit reached. Please add credits to continue." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          JSON.stringify({ error: "Invalid API key. Please check your OpenAI API key." }),
+          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-      const errorText = await response.text();
-      console.error("AI gateway error:", response.status, errorText);
-      throw new Error(`AI gateway error: ${response.status}`);
+      throw new Error(`OpenAI API error: ${response.status}`);
     }
 
     const data = await response.json();
