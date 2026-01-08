@@ -281,7 +281,8 @@ CREATE POLICY "Users can insert their own lookups" ON public.vin_lookups FOR INS
 1. Go to https://render.com and create a **Static Site**
 2. Connect your GitHub repository
 3. Configure build settings:
-   - **Build Command**: `npm run build`
+   - **Root Directory**: Leave **blank** (empty) if your code is in the repository root. Only fill this if your app is in a subdirectory.
+   - **Build Command**: `npm install && npm run build`
    - **Publish Directory**: `dist`
 4. Add environment variables:
    - `VITE_SUPABASE_URL` = Your Supabase project URL
