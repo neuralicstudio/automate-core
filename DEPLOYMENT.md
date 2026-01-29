@@ -287,7 +287,14 @@ CREATE POLICY "Users can insert their own lookups" ON public.vin_lookups FOR INS
 4. Add environment variables:
    - `VITE_SUPABASE_URL` = Your Supabase project URL
    - `VITE_SUPABASE_PUBLISHABLE_KEY` = Your Supabase anon key
-5. Click **Deploy**
+5. **Configure Redirects/Rewrites** (CRITICAL for SPA routing):
+   - Go to **Redirects/Rewrites** tab
+   - Add a rewrite rule:
+     - **Source**: `/*`
+     - **Destination**: `/index.html`
+     - **Action**: `Rewrite`
+   - This prevents 404 errors when refreshing pages
+6. Click **Deploy**
 
 ### Step 6: Configure Auth Redirect URLs
 In your external Supabase project:
